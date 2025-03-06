@@ -23,11 +23,11 @@ export class SearchParams {
     }
     protected _filter: string
 
-    constructor(props: SearchProps) {
-        this._page = props.page
-        this._perPage = props.perPage
-        this._sort = props.sort
-        this._filter = props.filter
+    constructor(props: SearchProps = {}) {
+        this.page = props.page
+        this.perPage = props.perPage
+        this.sort = props.sort
+        this.filter = props.filter
     }
 
     get page(): number {
@@ -38,7 +38,7 @@ export class SearchParams {
 
         let _page = +value
 
-        if (isNaN(_page) || _page < 1)
+        if (isNaN(_page) || _page < 1 || parseInt(value.toString()) !== _page)
             _page = 1
 
         this._page = _page
@@ -52,7 +52,7 @@ export class SearchParams {
 
         let _perPage = +value
 
-        if (isNaN(_perPage) || _perPage < 1)
+        if (isNaN(_perPage) || _perPage < 1 || parseInt(value.toString()) !== _perPage || typeof value === "boolean")
             _perPage = 15
 
         this._perPage = _perPage
