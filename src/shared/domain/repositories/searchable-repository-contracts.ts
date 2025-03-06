@@ -62,29 +62,28 @@ export class SearchParams {
         return this._sort
     }
 
-    private set sort(sort) {
+    private set sort(value) {
 
-        let _sort = sort
+        if(!value || isNullOrEmpty(value.by)) {
+            this._sort = null
+            return
+        }
 
-        if(!_sort || isNullOrEmpty(_sort.by))
-            _sort = null
-        else if (_sort.direction.toLowerCase() !== "asc" && _sort.direction.toLowerCase() !== "desc")
-            _sort.direction = "desc"
-
-        this._sort = _sort
+        value.direction = value.direction?.toLowerCase() === "asc" ? "asc" : "desc"
+        this._sort = value
     }
 
     get filter(): string {
         return this._filter
     }
 
-    private set filter(filter: string) {
-        this._filter = isNullOrEmpty(filter) ? null : filter
+    private set filter(value: string) {
+        this._filter = isNullOrEmpty(value) ? null : `${value}`
     }
 }
 
 function isNullOrEmpty(value: string | null): boolean {
-    return value === null || value === undefined || value.trim() === ""
+    return value === null || value === undefined || value === ""
 }
 
 export interface SearchableRepositoryInterface<
