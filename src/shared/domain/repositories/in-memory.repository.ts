@@ -2,9 +2,9 @@ import { Entity } from "../entities/entity"
 import { NotFoundError } from "../errors/not-found-error"
 import { RepositoryInterface } from "./repository-contracts"
 
-export abstract class InMemoryRepository<E extends Entity<any>> implements RepositoryInterface<E> {
+export abstract class InMemoryRepository<E extends Entity<Props>, Props> implements RepositoryInterface<E, Props> {
 
-    protected items: E[] = []
+    items: E[] = []
 
     async delete(id: string): Promise<void> {
         await this._get(id)
