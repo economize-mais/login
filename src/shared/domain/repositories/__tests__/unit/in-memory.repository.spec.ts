@@ -28,7 +28,7 @@ describe("InMemoryRepository unit tests", () => {
         await expect(sut.getById("fakeId")).rejects.toThrow(new NotFoundError("Entity not found"))
     })
 
-    it("should find a entity by id", async () => {
+    it("should get a entity by id", async () => {
         const entity = new StubEntity({ name: "product", price: 10 })
         await sut.save(entity)
         const result = await sut.getById(entity.id)
@@ -53,5 +53,16 @@ describe("InMemoryRepository unit tests", () => {
         const entityUpdated = new StubEntity({ name: "product", price: 20 }, entity.id)
         await sut.update(entityUpdated)
         expect(entityUpdated.toJSON()).toStrictEqual(sut.items[0].toJSON())
+    })
+
+    it("should throw error when entity not found", async () => {
+        await expect(sut.delete("fakeId")).rejects.toThrow(new NotFoundError("Entity not found"))
+    })
+
+    it("should delete an entity", async () => {
+        const entity = new StubEntity({ name: "product", price: 10 })
+        await sut.save(entity)
+        await sut.delete(entity.id)
+        expect(sut.items).toHaveLength(0)
     })
 })
