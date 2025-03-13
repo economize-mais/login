@@ -13,6 +13,18 @@ export type SearchProps<Filter = string> = {
     filter?: Filter | null
 }
 
+export type SearchResultProps<E extends Entity<any>, Filter> = {
+    items: E[]
+    total: number
+    currentPage: number
+    perPage: number
+    sort: {
+        by: string | null
+        direction: SortDirection | null
+    }
+    filter: Filter | null
+}
+
 export class SearchParams {
 
     protected _page: number
@@ -79,6 +91,41 @@ export class SearchParams {
 
     private set filter(value: string) {
         this._filter = isNullOrEmpty(value) ? null : `${value}`
+    }
+}
+
+export class SearcResult<E extends Entity<any>, Filter = string> {
+    readonly items: E[]
+    readonly total: number
+    readonly currentPage: number
+    readonly perPage: number
+    readonly lastPage: number
+    readonly sort: {
+        by: string | null
+        direction: SortDirection | null
+    }
+    readonly filter: Filter | null
+
+    constructor(props: SearchResultProps<E, Filter>) {
+        this.items = props.items
+        this.total = props.total
+        this.currentPage = props.currentPage
+        this.perPage = props.perPage
+        this.lastPage = Math.ceil(this.total / this.perPage)
+        this.sort = props.sort ?? null
+        this.filter = props.filter ?? null
+    }
+
+    toJSON(forceEntity = false) {
+        return {
+            items: forceEntity ? this.items.map(item => item.toJSON()) : this.items,
+            total: this.total,
+            currentPage: this.currentPage,
+            perPage: this.perPage,
+            lastPage: this.lastPage,
+            sort: this.sort,
+            filter: this.filter
+        }
     }
 }
 
