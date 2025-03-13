@@ -92,8 +92,26 @@ describe("InMemoryRepository unit tests", () => {
     })
 
     describe("applyPaginate method", () => {
-        it("should save an entity", async () => {
+        it("should paginated items", async () => {
+            const items = [
+                new StubEntity({name: "a", price: 50 }),
+                new StubEntity({name: "b", price: 50 }),
+                new StubEntity({name: "c", price: 50 }),
+                new StubEntity({name: "d", price: 50 }),
+                new StubEntity({name: "e", price: 50 })
+            ]
 
+            let itemsPaginated = await sut["applyPaginated"](items, 1, 2)
+            expect(itemsPaginated).toStrictEqual([items[0], items[1]])
+
+            itemsPaginated = await sut["applyPaginated"](items, 2, 2)
+            expect(itemsPaginated).toStrictEqual([items[2], items[3]])
+
+            itemsPaginated = await sut["applyPaginated"](items, 3, 2)
+            expect(itemsPaginated).toStrictEqual([items[4]])
+
+            itemsPaginated = await sut["applyPaginated"](items, 4, 2)
+            expect(itemsPaginated).toStrictEqual([])
         })
     })
 
