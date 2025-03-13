@@ -136,8 +136,9 @@ function isNullOrEmpty(value: string | null): boolean {
 export interface SearchableRepositoryInterface<
     E extends Entity<Props>,
     Props,
-    SearchInput,
-    SearchOutput
+    Filter = string,
+    SearchInput = SearchParams,
+    SearchOutput = SearcResult<E, Filter>
 > extends RepositoryInterface<E, Props> {
-    search(props: SearchParams): Promise<SearchOutput>
+    search(props: SearchInput): Promise<SearchOutput>
 }
