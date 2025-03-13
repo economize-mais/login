@@ -63,8 +63,31 @@ describe("InMemoryRepository unit tests", () => {
     })
 
     describe("applySort method", () => {
-        it("should save an entity", async () => {
+        it("should no sort items", async () => {
+            const items = [
+                new StubEntity({name: "b", price: 50 }),
+                new StubEntity({name: "a", price: 50 })
+            ]
 
+            let itemsSorted = await sut["applySort"](items, { by: null, direction: null})
+            expect(itemsSorted).toStrictEqual(items)
+
+            itemsSorted = await sut["applySort"](items, { by: "price", direction: "asc"})
+            expect(itemsSorted).toStrictEqual(items)
+        })
+
+        it("should sort items", async () => {
+            const items = [
+                new StubEntity({name: "b", price: 50 }),
+                new StubEntity({name: "a", price: 50 }),
+                new StubEntity({name: "c", price: 50 })
+            ]
+
+            let itemsSorted = await sut["applySort"](items, { by: "name", direction: "asc"})
+            expect(itemsSorted).toStrictEqual([items[1], items[0], items[2]])
+
+            itemsSorted = await sut["applySort"](items, { by: "name", direction: "desc"})
+            expect(itemsSorted).toStrictEqual([items[2], items[0], items[1]])
         })
     })
 
