@@ -25,7 +25,7 @@ export type SearchResultProps<E extends Entity<any>, Filter> = {
     filter: Filter | null
 }
 
-export class SearchParams {
+export class SearchParams<Filter = string> {
 
     protected _page: number
     protected _perPage: number
@@ -33,9 +33,9 @@ export class SearchParams {
         by: string | null
         direction: SortDirection | null
     }
-    protected _filter: string
+    protected _filter: Filter
 
-    constructor(props: SearchProps = {}) {
+    constructor(props: SearchProps<Filter> = {}) {
         this.page = props.page
         this.perPage = props.perPage
         this.sort = props.sort
@@ -85,12 +85,12 @@ export class SearchParams {
         this._sort = value
     }
 
-    get filter(): string {
+    get filter(): Filter {
         return this._filter
     }
 
-    private set filter(value: string) {
-        this._filter = isNullOrEmpty(value) ? null : `${value}`
+    private set filter(value: Filter | null) {
+        this._filter = isNullOrEmpty<Filter | null>(value) ? null : (`${value}` as any)
     }
 }
 
@@ -129,7 +129,7 @@ export class SearcResult<E extends Entity<any>, Filter = string> {
     }
 }
 
-function isNullOrEmpty(value: string | null): boolean {
+function isNullOrEmpty<T>(value: T): boolean {
     return value === null || value === undefined || value === ""
 }
 
@@ -137,7 +137,7 @@ export interface SearchableRepositoryInterface<
     E extends Entity<Props>,
     Props,
     Filter = string,
-    SearchInput = SearchParams,
+    SearchInput = SearchParams<Filter>,
     SearchOutput = SearcResult<E, Filter>
 > extends RepositoryInterface<E, Props> {
     sortableFields: string[]
