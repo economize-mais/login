@@ -1,12 +1,11 @@
 import { BcryptjsHashProvider } from "@/users/infrastructure/providers/hash-provider/bcryptjs-hash.provider"
-import { BadRequestError } from "@/shared/application/errors/bad-request-error"
 import { HashProvider } from "@/shared/application/providers/hash-provider"
+import { InvalidPasswordError } from "@/shared/application/errors/invalid-password-error"
 import { NotFoundError } from "@/shared/domain/errors/not-found-error"
 import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
 import { UserEntity } from "@/users/domain/entities/user.entity"
 import { UserInMemoryRepository } from "@/users/infrastructure/database/in-memory/repositories/user-in-memory.repository"
 import { UpdatePasswordUseCase } from "../../update-password.usecase"
-import { InvalidPasswordError } from "@/shared/application/errors/invalid-password-error"
 
 describe("UpdatePasswordUseCase unit tests", () => {
 
