@@ -1,10 +1,10 @@
-import { UserInMemoryRepository } from "@/users/infrastructure/database/in-memory/repositories/user-in-memory.repository"
-import { SignupUseCase } from "../../signup.usecase"
-import { HashProvider } from "@/shared/application/providers/hash-provider"
-import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
+import { BadRequestError } from "@/shared/application/errors/bad-request-error"
 import { BcryptjsHashProvider } from "@/users/infrastructure/providers/hash-provider/bcryptjs-hash.provider"
 import { ConflictError } from "@/shared/domain/errors/conflict-error"
-import { BadRequestError } from "@/users/application/errors/bad-request-error"
+import { HashProvider } from "@/shared/application/providers/hash-provider"
+import { SignupUseCase } from "../../signup.usecase"
+import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
+import { UserInMemoryRepository } from "@/users/infrastructure/database/in-memory/repositories/user-in-memory.repository"
 
 describe("SignupUsecase unit tests", () => {
 

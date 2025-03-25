@@ -1,4 +1,4 @@
-import { BadRequestError } from "../errors/bad-request-error"
+import { BadRequestError } from "@/shared/application/errors/bad-request-error"
 import { HashProvider } from "@/shared/application/providers/hash-provider"
 import { UseCase as DefaultUseCase } from "@/shared/application/usecases/use-case"
 import { UserEntity } from "@/users/domain/entities/user.entity"
