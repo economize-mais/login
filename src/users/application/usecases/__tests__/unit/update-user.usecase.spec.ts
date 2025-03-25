@@ -1,10 +1,9 @@
-import { NotFoundError } from "@/shared/domain/errors/not-found-error"
-import { GetUserUseCase } from "../../get-user.usecase"
-import { UserInMemoryRepository } from "@/users/infrastructure/database/in-memory/repositories/user-in-memory.repository"
-import { UserEntity } from "@/users/domain/entities/user.entity"
-import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
-import { UpdateUserUseCase } from "../../update-user.usecase"
 import { BadRequestError } from "@/shared/application/errors/bad-request-error"
+import { NotFoundError } from "@/shared/domain/errors/not-found-error"
+import { UpdateUserUseCase } from "../../update-user.usecase"
+import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
+import { UserEntity } from "@/users/domain/entities/user.entity"
+import { UserInMemoryRepository } from "@/users/infrastructure/database/in-memory/repositories/user-in-memory.repository"
 
 describe("UpdateUserUseCase unit tests", () => {
 
