@@ -1,8 +1,8 @@
 import { ListUserUseCase } from "../../listuser.usecase"
+import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
+import { UserEntity } from "@/users/domain/entities/user.entity"
 import { UserInMemoryRepository } from "@/users/infrastructure/database/in-memory/repositories/user-in-memory.repository"
 import { UserRepository } from "@/users/domain/repositories/user.repository"
-import { UserEntity } from "@/users/domain/entities/user.entity"
-import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
 
 describe("ListUserUseCase unit tests", () => {
 
