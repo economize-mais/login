@@ -1,6 +1,5 @@
 import { Entity } from "@/shared/domain/entities/entity"
 import { SearcResult } from "@/shared/domain/repositories/searchable-repository-contracts"
-import { UserProps } from "@/users/domain/entities/user.entity"
 
 export type PaginationOutput<Item = any> = {
     items: Item[]
@@ -11,7 +10,7 @@ export type PaginationOutput<Item = any> = {
 }
 
 export class PaginationOutputMapper {
-    static toOutput<Item = any>(items: Item[], result: SearcResult<Entity<UserProps>>): PaginationOutput<Item> {
+    static toOutput<Item = any>(items: Item[], result: SearcResult<Entity<any>>): PaginationOutput<Item> {
         return {
             items,
             total: result.total,
