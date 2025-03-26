@@ -35,7 +35,10 @@ import { UsersModule } from "./users/infrastructure/users.module"
             ) => {
                 return new SigninUseCase.UseCase(hashProvider, userRepository)
             },
-            inject: ["UserRepository", "HashProvider"]
+            inject: [
+                "UserRepository",
+                "HashProvider"
+            ]
         }
     ]
 })
