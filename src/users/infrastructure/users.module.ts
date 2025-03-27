@@ -11,14 +11,12 @@ import { UpdateUserUseCase } from "../application/usecases/update-user.usecase"
 import { UserInMemoryRepository } from "./database/in-memory/repositories/user-in-memory.repository"
 import { UserRepository } from "../domain/repositories/user.repository"
 import { UsersController } from "./users.controller"
-import { UsersService } from "./users.service"
 
 @Module({
     controllers: [
         UsersController
     ],
     providers: [
-        UsersService,
         {
             provide: "UserRepository",
             useClass: UserInMemoryRepository
@@ -31,26 +29,26 @@ import { UsersService } from "./users.service"
             provide: SignupUseCase.UseCase,
             useFactory: (
                 hashProvider: HashProvider,
-                userRepository: UserRepository.Repository
+                repo: UserRepository.Repository
             ) => {
-                return new SignupUseCase.UseCase(hashProvider, userRepository)
+                return new SignupUseCase.UseCase(hashProvider, repo)
             },
             inject: [
-                "UserRepository",
-                "HashProvider"
+                "HashProvider",
+                "UserRepository"
             ]
         },
         {
             provide: SigninUseCase.UseCase,
             useFactory: (
                 hashProvider: HashProvider,
-                userRepository: UserRepository.Repository
+                repo: UserRepository.Repository
             ) => {
-                return new SigninUseCase.UseCase(hashProvider, userRepository)
+                return new SigninUseCase.UseCase(hashProvider, repo)
             },
             inject: [
-                "UserRepository",
-                "HashProvider"
+                "HashProvider",
+                "UserRepository"
             ]
         },
         {
