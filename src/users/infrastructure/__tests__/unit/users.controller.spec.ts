@@ -1,3 +1,5 @@
+import { GetUserUseCase } from "@/users/application/usecases/get-user.usecase"
+import { ListUserUseCase } from "@/users/application/usecases/list-user.usecase"
 import { SigninDto } from "../../dtos/signin.dto"
 import { SigninUseCase } from "@/users/application/usecases/signin.usecase"
 import { SignupDto } from "../../dtos/signup.dto"
@@ -8,7 +10,6 @@ import { UpdateUserDto } from "../../dtos/update-user.dto"
 import { UpdateUserUseCase } from "@/users/application/usecases/update-user.usecase"
 import { UsersController } from "../../users.controller"
 import { UserOutput } from "@/users/application/dtos/user-output"
-import { GetUserUseCase } from "@/users/application/usecases/get-user.usecase"
 
 describe("UsersController unit tests", () => {
 
@@ -102,5 +103,24 @@ describe("UsersController unit tests", () => {
         const result = await sut.findOne(id)
         expect(output).toStrictEqual(result)
         expect(mockGetUserUseCase.execute).toHaveBeenCalledWith({ id })
+    })
+
+    it("should list users", async () => {
+        const output: ListUserUseCase.Output = {
+            items: [props],
+            currentPage: 1,
+            lastPage: 1,
+            perPage: 10,
+            total: 1
+        }
+        const mockListUsersUseCase = { execute: jest.fn().mockReturnValue(Promise.resolve(output)) }
+        sut["listUserUseCase"] = mockListUsersUseCase as any
+        const searchParams = {
+            page: 1,
+            perPage: 1
+        }
+        const result = await sut.search(searchParams)
+        expect(output).toStrictEqual(result)
+        expect(mockListUsersUseCase.execute).toHaveBeenCalledWith(searchParams)
     })
 })
