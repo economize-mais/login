@@ -1,16 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, HttpCode, Query, Put } from "@nestjs/common"
 import { DeleteUserUseCase } from "../application/usecases/delete-user.usecase"
 import { GetUserUseCase } from "../application/usecases/get-user.usecase"
+import { ListUserDto } from "./dtos/list-users.dto"
 import { ListUserUseCase } from "../application/usecases/list-user.usecase"
 import { SignupDto } from "./dtos/signup.dto"
+import { SigninDto } from "./dtos/signin.dto"
 import { SigninUseCase } from "../application/usecases/signin.usecase"
 import { SignupUseCase } from "../application/usecases/signup.usecase"
+import { UpdatePasswordDto } from "./dtos/update-password.dto"
 import { UpdatePasswordUseCase } from "../application/usecases/update-password.usecase"
 import { UpdateUserDto } from "./dtos/update-user.dto"
 import { UpdateUserUseCase } from "../application/usecases/update-user.usecase"
-import { SigninDto } from "./dtos/signin.dto"
-import { ListUserDto } from "./dtos/list-users.dto"
-import { UpdatePasswordDto } from "./dtos/update-password.dto"
 
 @Controller("users")
 export class UsersController {
