@@ -35,8 +35,8 @@ export class UserPrismaRepository implements UserRepository.Repository {
         throw new Error("Method not implemented.");
     }
 
-    save(entity: UserEntity): Promise<void> {
-        throw new Error("Method not implemented.");
+    async save(entity: UserEntity): Promise<void> {
+        await this.prismaService.user.create({ data: entity.toJSON() })
     }
 
     update(entity: UserEntity): Promise<void> {
