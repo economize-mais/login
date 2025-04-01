@@ -4,11 +4,12 @@ import { DeleteUserUseCase } from "../application/usecases/delete-user.usecase"
 import { GetUserUseCase } from "../application/usecases/get-user.usecase"
 import { HashProvider } from "@/shared/application/providers/hash-provider"
 import { ListUserUseCase } from "../application/usecases/list-user.usecase"
+import { PrismaService } from "@/shared/infrastructure/database/prisma/prisma.service"
 import { SigninUseCase } from "../application/usecases/signin.usecase"
 import { SignupUseCase } from "../application/usecases/signup.usecase"
 import { UpdatePasswordUseCase } from "../application/usecases/update-password.usecase"
 import { UpdateUserUseCase } from "../application/usecases/update-user.usecase"
-import { UserInMemoryRepository } from "./database/in-memory/repositories/user-in-memory.repository"
+import { UserPrismaRepository } from "./database/prisma/repositories/user-prisma.repository"
 import { UserRepository } from "../domain/repositories/user.repository"
 import { UsersController } from "./users.controller"
 
@@ -18,8 +19,15 @@ import { UsersController } from "./users.controller"
     ],
     providers: [
         {
+            provide: "PrismaService",
+            useClass: PrismaService
+        },
+        {
             provide: "UserRepository",
-            useClass: UserInMemoryRepository
+            useFactory: (prismaService: PrismaService) => {
+                return new UserPrismaRepository(prismaService)
+            },
+            inject: [ "PrismaService" ]
         },
         {
             provide: "HashProvider",
