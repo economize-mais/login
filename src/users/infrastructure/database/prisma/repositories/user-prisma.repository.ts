@@ -28,7 +28,7 @@ export class UserPrismaRepository implements UserRepository.Repository {
     }
 
     async search(props: UserRepository.SearchParams): Promise<UserRepository.SearcResult> {
-        const sortable = this.sortableFields?.includes(props.sort.by) || false
+        const sortable = this.sortableFields?.includes(props?.sort?.by) || false
         const orderByField = sortable ? props.sort.by : "createdAt"
         const orderByDir = sortable ? props.sort.direction : "desc"
 
