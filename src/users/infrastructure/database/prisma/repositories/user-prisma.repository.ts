@@ -3,6 +3,7 @@ import { PrismaService } from "@/shared/infrastructure/database/prisma/prisma.se
 import { UserEntity } from "@/users/domain/entities/user.entity"
 import { UserModelMapper } from "../../models/user-model.mapper"
 import { UserRepository } from "@/users/domain/repositories/user.repository"
+import { ConflictError } from "@/shared/domain/errors/conflict-error"
 
 export class UserPrismaRepository implements UserRepository.Repository {
 
@@ -15,12 +16,26 @@ export class UserPrismaRepository implements UserRepository.Repository {
         private prismaService: PrismaService
     ) {}
 
-    getByEmail(email: string): Promise<UserEntity> {
-        throw new Error("Method not implemented.");
+    async getByEmail(email: string): Promise<UserEntity> {
+        try {
+
+            const user = await this.prismaService.user.findUnique({
+                where: { email }
+            })
+
+            return UserModelMapper.toEntity(user)
+
+        } catch (err) {
+            throw new NotFoundError(`UserModel not found usind email ${email}`)
+        }
     }
 
-    emailExists(email: string): Promise<void> {
-        throw new Error("Method not implemented.");
+    async emailExists(email: string): Promise<void> {
+        const user = await this.prismaService.user.findUnique({
+            where: { email }
+        })
+        if(user)
+            throw new ConflictError("Email address already used")
     }
 
     getById(id: string): Promise<UserEntity> {
