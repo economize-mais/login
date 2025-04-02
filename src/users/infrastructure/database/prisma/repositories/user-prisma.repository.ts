@@ -1,9 +1,9 @@
+import { ConflictError } from "@/shared/domain/errors/conflict-error"
 import { NotFoundError } from "@/shared/domain/errors/not-found-error"
 import { PrismaService } from "@/shared/infrastructure/database/prisma/prisma.service"
 import { UserEntity } from "@/users/domain/entities/user.entity"
 import { UserModelMapper } from "../../models/user-model.mapper"
 import { UserRepository } from "@/users/domain/repositories/user.repository"
-import { ConflictError } from "@/shared/domain/errors/conflict-error"
 
 export class UserPrismaRepository implements UserRepository.Repository {
 
