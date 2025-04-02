@@ -52,7 +52,7 @@ describe("UserPrismaRepository integration tests", () => {
 
     it("should returns all users", async () => {
         const entity = new UserEntity(UserDataBuilder({}))
-        const newUser = await prismaService.user.create({
+        await prismaService.user.create({
             data: entity.toJSON()
         })
         const entities = await sut.getAll()
