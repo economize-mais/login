@@ -28,7 +28,7 @@ describe("UserPrismaRepository integration tests", () => {
 
     it("should throws error when entity not found", async () => {
         await expect(() => sut.getById("fakeId")).rejects.toThrow(
-            new NotFoundError("UserModel not found usind ID fakeId")
+            new NotFoundError("UserModel not found using ID fakeId")
         )
     })
 
@@ -66,7 +66,7 @@ describe("UserPrismaRepository integration tests", () => {
     it("should throws error on update when entity not found", async () => {
         const entity = new UserEntity(UserDataBuilder({}))
         await expect(() => sut.update(entity)).rejects.toThrow(
-            new NotFoundError(`UserModel not found usind ID ${entity._id}`)
+            new NotFoundError(`UserModel not found using ID ${entity._id}`)
         )
     })
 
@@ -91,7 +91,7 @@ describe("UserPrismaRepository integration tests", () => {
     it("should throws error on delete when entity not found", async () => {
         const entity = new UserEntity(UserDataBuilder({}))
         await expect(() => sut.delete(entity._id)).rejects.toThrow(
-            new NotFoundError(`UserModel not found usind ID ${entity._id}`)
+            new NotFoundError(`UserModel not found using ID ${entity._id}`)
         )
     })
 
@@ -114,7 +114,7 @@ describe("UserPrismaRepository integration tests", () => {
 
     it("should throws error  when entity not found", async () => {
         await expect(() => sut.getByEmail("a@a.com")).rejects.toThrow(
-            new NotFoundError(`UserModel not found usind email a@a.com`)
+            new NotFoundError(`UserModel not found using email a@a.com`)
         )
     })
 
@@ -179,7 +179,7 @@ describe("UserPrismaRepository integration tests", () => {
             })
         })
 
-        it("should search usind filter, sort and paginate", async () => {
+        it("should search using filter, sort and paginate", async () => {
             const createdAt = new Date()
             const entities: UserEntity[] = []
             const arrange = ["test", "a", "TEST", "b", "TeSt"]
