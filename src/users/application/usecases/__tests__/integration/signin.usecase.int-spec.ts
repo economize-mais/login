@@ -5,15 +5,16 @@ import { DatabaseModule } from "@/shared/infrastructure/database/database.module
 import { HashProvider } from "@/shared/application/providers/hash-provider"
 import { setupPrismaTests } from "@/shared/infrastructure/database/prisma/testing/setup-prisma-tests"
 import { UserPrismaRepository } from "@/users/infrastructure/database/prisma/repositories/user-prisma.repository"
-import { UpdatePasswordUseCase } from "../../update-password.usecase"
 import { UserEntity } from "@/users/domain/entities/user.entity"
 import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builder"
 import { NotFoundError } from "@/shared/domain/errors/not-found-error"
-import { InvalidPasswordError } from "@/shared/application/errors/invalid-password-error"
+import { SigninUseCase } from "../../signin.usecase"
+import { InvalidCredentialsError } from "@/shared/application/errors/invalid-credentials-error"
+import { BadRequestError } from "@/shared/application/errors/bad-request-error"
 
-describe("UpdatePasswordUseCases integration tests", () => {
+describe("SigninUseCase integration tests", () => {
     const prismaService =  new PrismaClient()
-    let sut: UpdatePasswordUseCase.UseCase
+    let sut: SigninUseCase.UseCase
     let repository: UserPrismaRepository
     let module: TestingModule
     let hashProvider: HashProvider
@@ -29,7 +30,7 @@ describe("UpdatePasswordUseCases integration tests", () => {
     })
 
     beforeEach(async () => {
-        sut = new UpdatePasswordUseCase.UseCase(hashProvider, repository)
+        sut = new SigninUseCase.UseCase(hashProvider, repository)
         await prismaService.user.deleteMany()
     })
 
@@ -37,62 +38,60 @@ describe("UpdatePasswordUseCases integration tests", () => {
         await module.close()
     })
 
-    it("should throws error  when entity found by id", async () => {
+    it("should not be able to authenticate with wrong email", async () => {
         const entity = new UserEntity(UserDataBuilder({}))
         await expect(() => sut.execute({
-            id: entity._id,
-            oldPassword: "oldPassword",
-            password: "newPassword",
-        })).rejects.toThrow(
-            new NotFoundError(`UserModel not found using ID ${entity._id}`)
-        )
+            email: entity.email,
+            password: "1234",
+        })).rejects.toBeInstanceOf(NotFoundError)
     })
 
-    it("should throws error when old password not provided", async () => {
-        const entity = new UserEntity(UserDataBuilder({}))
+    it("should not be able to authenticate with wrong password", async () => {
+        const hashPassword = await hashProvider.generateHash("1234")
+        const entity = new UserEntity(UserDataBuilder({
+            email: "a@a.com",
+            password: hashPassword
+        }))
+
         await prismaService.user.create({
             data: entity.toJSON()
         })
 
         await expect(() => sut.execute({
-            id: entity.id,
-            oldPassword: "",
-            password: "newPassword",
-        })).rejects.toThrow(
-            new InvalidPasswordError("Old password and new password is required")
-        )
+            email: "a@a.com",
+            password: "fake",
+        })).rejects.toBeInstanceOf(InvalidCredentialsError)
     })
 
-    it("should throws error when new password not provided", async () => {
-        const entity = new UserEntity(UserDataBuilder({}))
-        await prismaService.user.create({
-            data: entity.toJSON()
-        })
-
+    it("should throws error when email not provided", async () => {
         await expect(() => sut.execute({
-            id: entity.id,
-            oldPassword: "oldPassword",
-            password: "",
-        })).rejects.toThrow(
-            new InvalidPasswordError("Old password and new password is required")
-        )
+            email: null,
+            password: "1234",
+        })).rejects.toBeInstanceOf(BadRequestError)
     })
 
-    it("should update a password", async () => {
-        const oldPassword = await hashProvider.generateHash("1234")
-        const entity = new UserEntity(UserDataBuilder({ password: oldPassword }))
+    it("should throws error when password not provided", async () => {
+        await expect(() => sut.execute({
+            email: "a@a.com",
+            password: null,
+        })).rejects.toBeInstanceOf(BadRequestError)
+    })
+
+    it("should authenticate a user", async () => {
+        const hashPassword = await hashProvider.generateHash("1234")
+        const entity = new UserEntity(UserDataBuilder({
+            email: "a@a.com",
+            password: hashPassword
+        }))
         await prismaService.user.create({
             data: entity.toJSON()
         })
 
         const output = await sut.execute({
-            id: entity._id,
-            oldPassword: "1234",
-            password: "newpassword"
+            email: "a@a.com",
+            password: "1234"
         })
 
-        const res = await hashProvider.compareHash("newpassword", output.password)
-
-        expect(res).toBeTruthy()
+        expect(output).toMatchObject(entity.toJSON())
     })
 })
