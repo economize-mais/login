@@ -19,7 +19,7 @@ describe("UsersPresenter unit tests", () => {
     })
 
     describe("constuctor", () => {
-        it("should be defined", () => {
+        it("should set values", () => {
             expect(sut.id).toEqual(props.id)
             expect(sut.name).toEqual(props.name)
             expect(sut.email).toEqual(props.email)
