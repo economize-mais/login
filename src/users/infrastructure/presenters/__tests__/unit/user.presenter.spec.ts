@@ -76,14 +76,39 @@ describe("UsersCollectionPresenter unit tests", () => {
     })
 
     it("should presenter data", () => {
-        const sut = new UserCollectionPresenter({
+        let sut = new UserCollectionPresenter({
             items: [props],
             currentPage: 1,
             perPage: 2,
             lastPage: 1,
             total: 1
         })
-        const output = instanceToPlain(sut)
+        let output = instanceToPlain(sut)
+        expect(output).toStrictEqual({
+            data: [
+                {
+                    id: "d42ccf19-b246-4d1e-b64e-c3bdc392bd3f",
+                    name: "test name",
+                    email: "a@a.com",
+                    createdAt: createdAt.toISOString()
+                }
+            ],
+            meta: {
+                currentPage: 1,
+                perPage: 2,
+                lastPage: 1,
+                total: 1
+            }
+        })
+
+        sut = new UserCollectionPresenter({
+            items: [props],
+            currentPage: "1" as any,
+            perPage: "2" as any,
+            lastPage: "1" as any,
+            total: "1" as any
+        })
+        output = instanceToPlain(sut)
         expect(output).toStrictEqual({
             data: [
                 {
