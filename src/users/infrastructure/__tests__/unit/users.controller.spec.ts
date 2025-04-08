@@ -10,7 +10,7 @@ import { UpdateUserDto } from "../../dtos/update-user.dto"
 import { UpdateUserUseCase } from "@/users/application/usecases/update-user.usecase"
 import { UsersController } from "../../users.controller"
 import { UserOutput } from "@/users/application/dtos/user-output"
-import { UserPresenter } from "../../presenters/user.presenter"
+import { UserCollectionPresenter, UserPresenter } from "../../presenters/user.presenter"
 
 describe("UsersController unit tests", () => {
 
@@ -125,8 +125,9 @@ describe("UsersController unit tests", () => {
             page: 1,
             perPage: 1
         }
-        const result = await sut.search(searchParams)
-        expect(output).toStrictEqual(result)
+        const presenter = await sut.search(searchParams)
+        expect(presenter).toBeInstanceOf(UserCollectionPresenter)
+        expect(presenter).toEqual(new UserCollectionPresenter(output))
         expect(mockListUsersUseCase.execute).toHaveBeenCalledWith(searchParams)
     })
 })
