@@ -13,7 +13,7 @@ import { UserRepository } from "@/users/domain/repositories/user.repository"
 import { UsersModule } from "../../users.module"
 import { UsersController } from "../../users.controller"
 
-describe("UsersController unit tests", () => {
+describe("UsersController e2e tests", () => {
 
     let app: INestApplication
     let module: TestingModule
@@ -56,18 +56,13 @@ describe("UsersController unit tests", () => {
                 .send(signupDto)
                 .expect(201)
 
-            expect(Object.keys(res.body)).toStrictEqual([
-                "id",
-                "name",
-                "email",
-                "createdAt"
-            ])
+            expect(Object.keys(res.body)).toStrictEqual(["data"])
 
-            const user = await repo.getById(res.body.id)
+            const user = await repo.getById(res.body.data.id)
             const presenter = UsersController.userToResponse(user.toJSON())
             const serialized = instanceToPlain(presenter)
 
-            expect(res.body).toStrictEqual(serialized)
+            expect(res.body.data).toStrictEqual(serialized)
         })
     })
 })
