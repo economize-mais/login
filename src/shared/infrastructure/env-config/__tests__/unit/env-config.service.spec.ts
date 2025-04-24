@@ -26,4 +26,12 @@ describe("EnvConfigService unit tests", () => {
     it("should return the variable PORT", () => {
         expect(sut.getAppPort()).toBe(8080)
     })
+
+    it("should return the variable JWT_SECRET", () => {
+        expect(sut.getJwtSecret()).toBe("fake_secret")
+    })
+
+    it("should return the variable JWT_EXPIRES_IN", () => {
+        expect(sut.getJwtExpiresInSeconds()).toBe(86400)
+    })
 })
