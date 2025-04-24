@@ -17,6 +17,10 @@ export namespace ListUserUseCase {
         ) {}
 
         async execute(input: Input): Promise<Output> {
+
+            if(input.sort && typeof input.sort === "string")
+                input.sort = JSON.parse(input.sort)
+
             const params = new UserRepository.SearchParams(input)
             const searchResult = await this.userRepo.search(params)
             return this.toOutput(searchResult)

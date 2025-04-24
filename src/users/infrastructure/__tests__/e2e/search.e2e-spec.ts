@@ -106,10 +106,10 @@ describe("UsersController e2e tests", () => {
             const searchParams = {
                 page: 1,
                 perPage: 2,
-                sort: {
+                sort: JSON.stringify({
                     by: "name",
                     direction: "asc"
-                },
+                }),
                 filter: "TEST"
             }
             const queryParams = new URLSearchParams(searchParams as any).toString()
@@ -123,13 +123,13 @@ describe("UsersController e2e tests", () => {
                 "meta"
             ])
 
-            expect(res.body).toEqual({
-                data: [entities[0], entities[2]].map(item => instanceToPlain(UsersController.userToResponse(item))),
+            expect(res.body).toStrictEqual({
+                data: [entities[0], entities[4]].map(item => instanceToPlain(UsersController.userToResponse(item))),
                 meta: {
-                    total: 3,
                     currentPage: 1,
                     perPage: 2,
-                    lastPage: 2
+                    lastPage: 2,
+                    total: 3
                 }
             })
         })
