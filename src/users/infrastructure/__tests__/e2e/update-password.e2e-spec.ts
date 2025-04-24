@@ -2,11 +2,11 @@ import { Test, TestingModule } from "@nestjs/testing"
 import request from "supertest"
 
 import { applyGlobalConfig } from "@/global-config"
+import { BcryptjsHashProvider } from "../../providers/hash-provider/bcryptjs-hash.provider"
 import { EnvConfigModule } from "@/shared/infrastructure/env-config/env-config.module"
 import { DatabaseModule } from "@/shared/infrastructure/database/database.module"
 import { HashProvider } from "@/shared/application/providers/hash-provider"
 import { INestApplication } from "@nestjs/common"
-import { instanceToPlain } from "class-transformer"
 import { PrismaClient } from "@prisma/client"
 import { setupPrismaTests } from "@/shared/infrastructure/database/prisma/testing/setup-prisma-tests"
 import { UpdatePasswordDto } from "../../dtos/update-password.dto"
@@ -14,8 +14,6 @@ import { UserDataBuilder } from "@/users/domain/testing/helpers/user-data-builde
 import { UserEntity } from "@/users/domain/entities/user.entity"
 import { UserRepository } from "@/users/domain/repositories/user.repository"
 import { UsersModule } from "../../users.module"
-import { UsersController } from "../../users.controller"
-import { BcryptjsHashProvider } from "../../providers/hash-provider/bcryptjs-hash.provider"
 
 describe("UsersController e2e tests", () => {
 
@@ -90,6 +88,60 @@ describe("UsersController e2e tests", () => {
                 "oldPassword should not be empty",
                 "oldPassword must be a string"
             ])
+        })
+
+        it("should return a error with 404 code when throw NotFoundError with invalid id", async () => {
+            const res = await request(app.getHttpServer())
+                .patch("/users/fakeid")
+                .send(updatePasswordDto)
+                .expect(404)
+
+            expect(res.body.error).toBe("Not Found")
+            expect(res.body.message).toEqual("UserModel not found using ID fakeid")
+        })
+
+        it("should return a error with 422 code when the password field is invalid", async () => {
+            delete updatePasswordDto.password
+
+            const res = await request(app.getHttpServer())
+                .patch(`/users/${entity._id}`)
+                .send(updatePasswordDto)
+                .expect(422)
+
+            expect(res.body.error).toBe("Unprocessable Entity")
+            expect(res.body.message).toEqual([
+                "password should not be empty",
+                "password must be a string"
+            ])
+        })
+
+        it("should return a error with 422 code when the oldPassword field is invalid", async () => {
+            delete updatePasswordDto.oldPassword
+
+            const res = await request(app.getHttpServer())
+                .patch(`/users/${entity._id}`)
+                .send(updatePasswordDto)
+                .expect(422)
+
+            expect(res.body.error).toBe("Unprocessable Entity")
+            expect(res.body.message).toEqual([
+                "oldPassword should not be empty",
+                "oldPassword must be a string"
+            ])
+        })
+
+        it("should return a error with 422 code when password does not match", async () => {
+            updatePasswordDto.oldPassword = "fake"
+
+            const res = await request(app.getHttpServer())
+                .patch(`/users/${entity._id}`)
+                .send(updatePasswordDto)
+                .expect(422)
+                .expect({
+                    statusCode: 422,
+                    error: 'Unprocessable Entity',
+                    message: 'Old password does not match'
+                  })
         })
     })
 })
