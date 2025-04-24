@@ -158,7 +158,7 @@ describe("UsersController e2e tests", () => {
                     statusCode: 409,
                     error: 'Conflict',
                     message: 'Email address already used'
-                  })
+                })
         })
     })
 })
