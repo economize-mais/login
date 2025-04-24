@@ -7,6 +7,7 @@ import {
 import { Reflector } from "@nestjs/core"
 
 import { ConflictErrorFilter } from "./shared/infrastructure/exception-filters/conflict-error/conflict-error.filter"
+import { InvalidCredentialsErrorFilter } from "./shared/infrastructure/exception-filters/invalid-credentials-error/invalid-credentials-error.filter"
 import { InvalidPasswordErrorFilter } from "./shared/infrastructure/exception-filters/invalid-password-error/invalid-password-error.filter"
 import { NotFoundErrorFilter } from "./shared/infrastructure/exception-filters/not-found-error/not-found-error.filter"
 import { WrapperDataInterceptor } from "./shared/infrastructure/interceptor/wrapper-data/wrapper-data.interceptor"
@@ -28,6 +29,7 @@ export function applyGlobalConfig(app: INestApplication) {
 
     app.useGlobalFilters(
         new ConflictErrorFilter(),
+        new InvalidCredentialsErrorFilter(),
         new InvalidPasswordErrorFilter(),
         new NotFoundErrorFilter()
     )
