@@ -101,8 +101,8 @@ import { UsersController } from "./users.controller"
                 return new UpdatePasswordUseCase.UseCase(hashProvider, userRepository)
             },
             inject: [
-                "UserRepository",
-                "HashProvider"
+                "HashProvider",
+                "UserRepository"
             ]
         },
         {
