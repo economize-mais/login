@@ -52,8 +52,8 @@ describe("ConflictErrorFilter (e2e)", () => {
             .expect(409)
             .expect({
                 statusCode: 409,
-                error: 'Conflict',
-                message: 'Conflicting data'
+                error: "Conflict",
+                message: "Conflicting data"
             })
     })
 })
