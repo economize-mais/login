@@ -12,6 +12,12 @@ import {
     Query,
     UseGuards
 } from "@nestjs/common"
+import {
+    ApiBearerAuth,
+    ApiResponse,
+    ApiTags,
+    getSchemaPath
+} from "@nestjs/swagger"
 
 import { AuthGuard } from "@/auth/infrastructure/auth.guard"
 import { AuthService } from "@/auth/infrastructure/auth.service"
@@ -30,6 +36,7 @@ import { UpdateUserUseCase } from "../application/usecases/update-user.usecase"
 import { UserOutput } from "../application/dtos/user-output"
 import { UserCollectionPresenter, UserPresenter } from "./presenters/user.presenter"
 
+@ApiTags("users")
 @Controller("users")
 export class UsersController {
 
@@ -78,6 +85,46 @@ export class UsersController {
         return this.authService.generateJwt(output.id)
     }
 
+    @ApiBearerAuth()
+    @ApiResponse({
+        status: 200,
+        schema: {
+            type: "object",
+            properties: {
+                meta: {
+                    type: "object",
+                    properties: {
+                        total: {
+                            type: "number"
+                        },
+                        currentPage: {
+                            type: "number"
+                        },
+                        lastPage: {
+                            type: "number"
+                        },
+                        perPage: {
+                            type: "number"
+                        }
+                    }
+                },
+                data: {
+                    type: "array",
+                    items: {
+                        $ref: getSchemaPath(UserPresenter)
+                    }
+                }
+            }
+        }
+    })
+    @ApiResponse({
+        status: 422,
+        description: "Parametros de consulta inválidos"
+    })
+    @ApiResponse({
+        status: 401,
+        description: "Acesso não autorizado"
+    })
     @UseGuards(AuthGuard)
     @Get()
     async search(@Query() searchParams: ListUserDto) {
