@@ -2,8 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing"
 import request from "supertest"
 
 import { applyGlobalConfig } from "@/global-config"
+import { BcryptjsHashProvider } from "../../providers/hash-provider/bcryptjs-hash.provider"
 import { EnvConfigModule } from "@/shared/infrastructure/env-config/env-config.module"
 import { DatabaseModule } from "@/shared/infrastructure/database/database.module"
+import { HashProvider } from "@/shared/application/providers/hash-provider"
 import { INestApplication } from "@nestjs/common"
 import { instanceToPlain } from "class-transformer"
 import { PrismaClient } from "@prisma/client"
@@ -19,6 +21,11 @@ describe("UsersController e2e tests", () => {
     let app: INestApplication
     let module: TestingModule
     let repo: UserRepository.Repository
+
+    let entity: UserEntity
+    let hashProvider: HashProvider
+    let hashPassword: string
+    let accessToken: string
 
     const prismaService = new PrismaClient()
 
@@ -37,10 +44,25 @@ describe("UsersController e2e tests", () => {
         applyGlobalConfig(app)
         await app.init()
         repo = module.get<UserRepository.Repository>("UserRepository")
+
+        hashProvider = new BcryptjsHashProvider()
+        hashPassword = await hashProvider.generateHash("1234")
     })
 
     beforeEach(async () => {
         await prismaService.user.deleteMany()
+        entity = new UserEntity(UserDataBuilder({
+            email: "a@a.com",
+            password: hashPassword
+        }))
+        await repo.save(entity)
+
+        const loginResponse = await request(app.getHttpServer())
+            .post("/users/login")
+            .send({ email: "a@a.com", password: "1234" })
+            .expect(200)
+
+        accessToken = loginResponse.body.accessToken
     })
 
     describe("GET /users", () => {
@@ -59,7 +81,7 @@ describe("UsersController e2e tests", () => {
                     })
                 )
             })
-
+            await prismaService.user.deleteMany()
             await prismaService.user.createMany({
                 data: entities.map(item => item.toJSON())
             })
@@ -69,6 +91,7 @@ describe("UsersController e2e tests", () => {
 
             const res = await request(app.getHttpServer())
                 .get(`/users/?${queryParams}`)
+                .set("Authorization", `Bearer ${accessToken}`)
                 .expect(200)
 
             expect(Object.keys(res.body)).toStrictEqual([
@@ -116,6 +139,7 @@ describe("UsersController e2e tests", () => {
 
             const res = await request(app.getHttpServer())
                 .get(`/users/?${queryParams}`)
+                .set("Authorization", `Bearer ${accessToken}`)
                 .expect(200)
 
             expect(Object.keys(res.body)).toStrictEqual([
@@ -137,10 +161,21 @@ describe("UsersController e2e tests", () => {
         it("should return a error with 422 code when the query params is invalid", async () => {
             const res = await request(app.getHttpServer())
                 .get(`/users/?fakeid=10`)
+                .set("Authorization", `Bearer ${accessToken}`)
                 .expect(422)
 
             expect(res.body.error).toBe("Unprocessable Entity")
             expect(res.body.message).toEqual(["property fakeid should not exist"])
+        })
+
+        it("should return a error with 401 code when the request is not authorized", async () => {
+            await request(app.getHttpServer())
+                .get(`/users`)
+                .expect(401)
+                .expect({
+                    statusCode: 401,
+                    message: "Unauthorized"
+                })
         })
     })
 })
