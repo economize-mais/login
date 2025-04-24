@@ -82,5 +82,17 @@ describe("UsersController e2e tests", () => {
                 "name must be a string"
             ])
         })
+
+        it("should return a error with 404 code when throw NotFoundError with invalid id", async () => {
+            await request(app.getHttpServer())
+                .put(`/users/fakeid`)
+                .send(updateUserDto)
+                .expect(404)
+                .expect({
+                    statusCode: 404,
+                    error: "Not Found",
+                    message: "UserModel not found using ID fakeid"
+                })
+        })
     })
 })
