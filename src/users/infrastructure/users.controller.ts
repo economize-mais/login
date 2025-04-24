@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, HttpCode, Query, Put } from "@nestjs/common"
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    Inject,
+    Param,
+    Patch,
+    Post,
+    Put,
+    Query
+} from "@nestjs/common"
+
+import { AuthService } from "@/auth/infrastructure/auth.service"
 import { DeleteUserUseCase } from "../application/usecases/delete-user.usecase"
 import { GetUserUseCase } from "../application/usecases/get-user.usecase"
 import { ListUserDto } from "./dtos/list-users.dto"
@@ -38,6 +52,9 @@ export class UsersController {
     @Inject(DeleteUserUseCase.UseCase)
     private deleteUserUseCase: DeleteUserUseCase.UseCase
 
+    @Inject(AuthService)
+    private authService: AuthService
+
     static userToResponse(output: UserOutput) {
         return new UserPresenter(output)
     }
@@ -56,7 +73,7 @@ export class UsersController {
     @Post("login")
     async login(@Body() signinDto: SigninDto) {
         const output = await this.signinUseCase.execute(signinDto)
-        return UsersController.userToResponse(output)
+        return this.authService.generateJwt(output.id)
     }
 
     @Get()
