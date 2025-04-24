@@ -1,4 +1,6 @@
 import { Module } from "@nestjs/common"
+
+import { AuthModule } from "@/auth/infrastructure/auth.module"
 import { BcryptjsHashProvider } from "./providers/hash-provider/bcryptjs-hash.provider"
 import { DeleteUserUseCase } from "../application/usecases/delete-user.usecase"
 import { GetUserUseCase } from "../application/usecases/get-user.usecase"
@@ -14,6 +16,9 @@ import { UserRepository } from "../domain/repositories/user.repository"
 import { UsersController } from "./users.controller"
 
 @Module({
+    imports: [
+        AuthModule
+    ],
     controllers: [
         UsersController
     ],
