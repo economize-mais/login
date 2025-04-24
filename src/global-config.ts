@@ -5,6 +5,8 @@ import {
     ValidationPipe
 } from "@nestjs/common"
 import { Reflector } from "@nestjs/core"
+
+import { ConflictErrorFilter } from "./shared/infrastructure/exception-filters/conflict-error/conflict-error.filter"
 import { WrapperDataInterceptor } from "./shared/infrastructure/interceptor/wrapper-data/wrapper-data.interceptor"
 
 export function applyGlobalConfig(app: INestApplication) {
@@ -20,5 +22,9 @@ export function applyGlobalConfig(app: INestApplication) {
     app.useGlobalInterceptors(
         new WrapperDataInterceptor(),
         new ClassSerializerInterceptor(app.get(Reflector))
+    )
+
+    app.useGlobalFilters(
+        new ConflictErrorFilter()
     )
 }
