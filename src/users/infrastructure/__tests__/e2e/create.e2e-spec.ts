@@ -1,6 +1,7 @@
-import request from "supertest"
 import { Test, TestingModule } from "@nestjs/testing"
+import request from "supertest"
 
+import { applyGlobalConfig } from "@/global-config"
 import { EnvConfigModule } from "@/shared/infrastructure/env-config/env-config.module"
 import { DatabaseModule } from "@/shared/infrastructure/database/database.module"
 import { INestApplication } from "@nestjs/common"
@@ -33,6 +34,7 @@ describe("UsersController unit tests", () => {
         }).compile()
 
         app = module.createNestApplication()
+        applyGlobalConfig(app)
         await app.init()
         repo = module.get<UserRepository.Repository>("UserRepository")
     })
